@@ -72,6 +72,23 @@ class Grab:
         raise NotImplementedError
 
 
+class FlipStock(Grab):
+    def __init__(self, tableau):
+        super().__init__(tableau)
+
+    def get_coords(self):
+        pass
+    
+    def is_valid(self):
+        if self.stock:
+            return True
+        return False
+    
+    def execute(self):
+        if self.is_valid():
+            card = self.stock.pop(-1)
+            self.stock.insert(0, card)
+
 class GrabStock(Grab):
     """
     Grab a card from the stock. You might only have the top card accessible.
@@ -92,6 +109,43 @@ class GrabStock(Grab):
         if self.is_valid():
             card = self.stock.pop(-1)
 
+
+class GrabFoundation(Grab):
+    """
+    Removes a card from the foundation, if your rules allow it.
+    Typically, solitaire doesn't let you remove cards from the foundation,
+    but if your variant does, implement that logic here.
+    """
+    def __init__(self):
+        super().__init__(Grab)
+
+    def get_coords(self):
+        self.move_position()
+        pass
+
+    def is_valid(self, card: 'Card'):
+          """Checks if a card can be played on the foundations, moves card if possible. Does not remove card from stock or stack"""
+        suit = card.suit
+        rank = card.rank_number
+        top_card = self.piles[suit][-1] if self.piles[suit] else None  # Get the top card in the
+        if (top_card == None and rank == 1) or (top_card.rank_number == rank - 1):
+            return True
+        print("Sorry, that is not a valid move")
+        return False      
+
+    def execute(self):
+        pass
+        
+
+class GrabTableau(Grab):
+    pass
+
+class GrabStack(GrabTableau):
+    pass
+
+
+class GrabCard(GrabTableau):
+    pass
 
     
 

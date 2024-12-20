@@ -12,12 +12,7 @@ class Stock:
         return f"The current card is: {self.stock[-1]}"
 
     def __repr__(self) -> str:
-        return f"{self.stock}"   
-
-    def flip_stock(self):
-        if self.stock:
-            card = self.stock.pop(-1)
-            self.stock.insert(0, card)       
+        return f"{self.stock}"          
 
     def face_value_up(self) -> bool:
         """Changes every card face value in the stack to true"""
@@ -25,10 +20,13 @@ class Stock:
             if not card.face_value:
                 card.change_face_value()
 
-    def remove_card(self) -> "Card":
+    def remove_top_card(self) -> "Card":
         return self.stock.pop(-1)
     
-
+    def flip_stock(self):
+        if self.stock:
+            card = self.stock.pop(-1)
+            self.stock.insert(0, card)
 
 
 class Foundations:
@@ -51,23 +49,32 @@ class Foundations:
                 display_cards.append('     ')
         return str(display_cards)
 
-    def is_valid(self, card: Card):
+    def play(self, card: Card):
         """Checks if a card can be played on the foundations, moves card if possible. Does not remove card from stock or stack"""
         suit = card.suit
         rank = card.rank_number
         top_card = self.piles[suit][-1] if self.piles[suit] else None  # Get the top card in the
-        if (top_card == None and rank == 1) or (top_card.rank_number == rank - 1):
-            return True
-        print("Sorry, that is not a valid move")
-        return False
+        if top_card == None and rank == 1:
+            self.piles[suit].append(card) 
+        elif top_card.rank_number == rank - 1:
+            self.piles[suit].append(card)
+        else:
+            print("Sorry, that is not a valid move")
 
-    def remove_card(self, card=None):
-        if not card:
-            return
-        self.piles[card.suit].pop(-1)
+    def remove_card(self, card: Card, row, col=None):
+        pass
 
-    def play_card(self, card: Card):
-        self.piles[card.suit].append(card)
+    # def find_top(self):
+    #     top_cards = []
+    #     for pile in self.piles.values():
+    #         if pile:
+    #             top_cards.append(pile[-1])
+    #         else:
+    #             top_cards.append('     ')
+    #     return top_cards
+    
+    # def find_compare_card(self, card: Card):
+    #     return self.piles[card.suit][-1] if len(self.piles[card.suit] > 0) else None
 
 
 class Stack:
@@ -103,8 +110,7 @@ class Stack:
         for idx, card in enumerate(self.row):
             if card.is_blank:
                 return idx
-        print('Sorry, that is not a valid row!')
-        return
+        return None
 
 
 class Tableau:
@@ -194,6 +200,7 @@ class Tableau:
         self.num_rows = max(row_lengths)
         return tableau_str
 
+    
     def __getitem__(self, key):
         """'Magic Method': Allows for indexing a column from the Tableau"""
         return self.tableau[key]
@@ -213,21 +220,3 @@ class Tableau:
         for i in range(len(self.tableau)):
             for j in range(max_len - len(self.tableau[i])):
                 self.tableau[i].row.append(Card(-1, -1))
-
-    def play_card(self, column: int, cards):
-        if not isinstance(cards, list):
-            cards = [cards]
-        column = self.tableau[column - 1]
-        bottom_idx = column.find_bottom_card()
-        if not bottom_idx:
-            return
-        for card in cards:
-            column.row.insert(bottom_idx, card)
-
-    def remove_card(self, row, column):
-        column = self.tableau[column-1]
-        bottom_idx = column.find_bottom_card()
-        if not bottom_idx:
-            return
-        for i in range(row - 1, bottom_idx):
-            del column.row[row-1:bottom_idx]

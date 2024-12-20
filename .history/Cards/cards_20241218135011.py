@@ -97,7 +97,3 @@ class Card:
                 return True
         return False
     
-    # def is_playable_foundation(self, other: "Card")
-    #     if not self.is_blank:
-    #         if self.
-    

@@ -33,7 +33,7 @@ class SolitaireGame:
         while self.game_on:
             print(self.tableau)
             print(f"The current stock card is: {self.tableau.stock.stock[-1]}" +
-                  f"Foundations: {self.tableau.foundations}")
+                  f"Foundations: {self.tableau.foundations.find_top()}")
             self.request_move()
             self.tableau.update()
             
