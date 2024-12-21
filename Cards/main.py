@@ -1,4 +1,4 @@
-from moves import FlipStock, Grab
+from moves import Grab
 from piles import Tableau
 from deck import BuildDeck
 
@@ -13,7 +13,7 @@ class SolitaireGame:
     def request_move(self):
         input_options = {
                 "flip": lambda: self.tableau.stock.flip_stock(),
-                "grab": lambda: self.execute_action(Grab),
+                "grab": lambda: Grab(self.tableau).request_move(),
                 }
         
         user_input = input("What would you like to do [flip or grab]: ").lower()
@@ -22,12 +22,6 @@ class SolitaireGame:
             action()
         else:
             print('Sorry, that is not a valid option')
-
-    def execute_action(self, action_class):
-        """Create an instance of MoveFromStock with current Tableau"""
-        move_class = action_class(self.tableau)
-        move_type = move_class.req_move_type()
-        move_type.run(self.tableau)
 
     def run(self):
         while self.game_on:

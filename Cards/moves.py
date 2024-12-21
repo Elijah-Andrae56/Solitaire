@@ -1,4 +1,4 @@
-# from cards import Card
+# I believe all i need to do is implement the move validation logic and the actual make move logic
 
 class Grab:
     """
@@ -12,27 +12,52 @@ class Grab:
         self.stock = tableau.stock.stock
         self.foundations = tableau.foundations
 
+        # Initialize the grab and place types.
+        self.grab_type = None
+        self.place_type = None
+
+        # Initialize the grab and place locations for tableau.
         self.grab_column = None
         self.grab_row = None
+        self.place_column = None
+        self.place_row = None
 
+        # Initialize the grab and place locations for foundation.
         self.grab_suite = None
+        self.place_suit = None
+
+        # Each Category has a different set of options for placing the card.
+        self.place_types = None
 
         self.class_types = {
             'stock': MoveStock,
             'tableau': MoveTableau,
             'foundation': MoveTableau
             }
+        self.place_types = self.class_types.copy()
+        
+        
+    def request_move(self):
         move_input = input("Where would you like to grab from? [Tableau, Stock, Foundation]: ").lower()
 
         if move_input not in self.class_types.keys():
             print('Sorry, that is not a valid option')
             return
-        self.move_type = self.options[move_input]()
-    
+        
+        # Initialize the grab process, we will ask where they would like to place in the req_loc_place
+        self.grab_type = self.class_types[move_input](self.tableau)
 
+        self.grab_type.req_loc_grab()
+        key_str = ', '.join(self.grab_type.place_types.keys())
+        self.place_type = input(
+            f"Where would you like to place the card? [{key_str}]: "
+            ).strip().lower()
+
+    
 class MoveTableau(Grab):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, tableau):
+        super().__init__(tableau)
+        del self.place_types['stock']
 
     def req_loc_grab(self):
         self.column = int(input('What column would you like to grab from?'))
@@ -43,8 +68,9 @@ class MoveTableau(Grab):
 
 
 class MoveStock(Grab):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, tableau):
+        super().__init__(tableau)
+        del self.place_types['stock']
 
     def req_loc_grab(self): # Not needed for stock.
         pass
@@ -54,13 +80,14 @@ class MoveStock(Grab):
 
 
 class MoveFoundation(Grab):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, tableau):
+        super().__init__(tableau)
+        del self.place_types['foundation', 'stock']
 
     def req_loc_grab(self):
         self.grab_suit = str(input('What suit would you like to grab from?'))
 
-    def req_loc_place(self):
+    def req_loc_place(self): # Not needed for foundation.
         pass
 
 
