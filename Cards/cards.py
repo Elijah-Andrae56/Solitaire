@@ -92,12 +92,17 @@ class Card:
             self.face_value = not self.face_value
 
     def is_playable(self, other_card: "Card") -> bool:
-        if not self.is_blank:
-            if self.rank_number == other_card.rank_number - 1 and self.color != other_card.color:
-                return True
+        if self.rank_number == other_card.rank_number - 1 and self.color != other_card.color:
+            return True
+        elif self.is_blank and other_card.rank == 13:
+            return True 
         return False
     
-    # def is_playable_foundation(self, other: "Card")
-    #     if not self.is_blank:
-    #         if self.
+    def is_playable_foundation(self, other: "Card") -> bool:
+        if not self.is_blank:
+            if self.suit == other.suit and self.rank_number == other.rank_number - 1:
+                return True
+            elif self.suit_number == -1 and other.rank_number:
+                return True
+            return False
     

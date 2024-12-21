@@ -25,11 +25,9 @@ class Stock:
             if not card.face_value:
                 card.change_face_value()
 
-    def remove_card(self) -> "Card":
-        return self.stock.pop(-1)
+    def remove_card(self):
+        self.stock.pop(-1)
     
-
-
 
 class Foundations:
     """Represents the foundations of a solitaire deck"""
@@ -48,20 +46,10 @@ class Foundations:
             if suit:
                 display_cards.append(str(suit[-1]))
             else: 
-                display_cards.append('     ')
+                display_cards.append(Card(-1, -1))
         return str(display_cards)
 
-    def is_valid(self, card: Card):
-        """Checks if a card can be played on the foundations, moves card if possible. Does not remove card from stock or stack"""
-        suit = card.suit
-        rank = card.rank_number
-        top_card = self.piles[suit][-1] if self.piles[suit] else None  # Get the top card in the
-        if (top_card == None and rank == 1) or (top_card.rank_number == rank - 1):
-            return True
-        print("Sorry, that is not a valid move")
-        return False
-
-    def remove_card(self, card=None):
+    def remove_card(self, card=Card):
         if not card:
             return
         self.piles[card.suit].pop(-1)
@@ -214,20 +202,22 @@ class Tableau:
             for j in range(max_len - len(self.tableau[i])):
                 self.tableau[i].row.append(Card(-1, -1))
 
-    def play_card(self, column: int, cards):
+    def play_card(self, column: int, cards: list[Card]) -> None:
         if not isinstance(cards, list):
             cards = [cards]
-        column = self.tableau[column - 1]
+        column = self.tableau[column - 1].row
         bottom_idx = column.find_bottom_card()
         if not bottom_idx:
             return
         for card in cards:
             column.row.insert(bottom_idx, card)
 
-    def remove_card(self, row, column):
-        column = self.tableau[column-1]
+    def remove_card(self, row: int, column: int):
+        column = self.tableau[column-1].row
         bottom_idx = column.find_bottom_card()
         if not bottom_idx:
             return
         for i in range(row - 1, bottom_idx):
             del column.row[row-1:bottom_idx]
+
+            

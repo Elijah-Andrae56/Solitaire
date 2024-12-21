@@ -1,4 +1,4 @@
-from cards import Card
+# from cards import Card
 
 class Grab:
     """
@@ -12,87 +12,82 @@ class Grab:
         self.stock = tableau.stock.stock
         self.foundations = tableau.foundations
 
-        self.move_type = None
+        self.grab_column = None
+        self.grab_row = None
 
-        self.card = None
-        self.other_card = None
+        self.grab_suite = None
 
-        self.card_pos = None
-        self.move_pos = None
-
-    @classmethod
-    def run(cls, tableau):
-        object = cls(tableau)
-        object.get_coords()
-        if object.is_valid():
-            object.execute()
-
-    def move_position(self):
-        loc_type = input('Where would you like to place the card [tableau, foundation]').lower()
-        responses = {
-            'tableau': self.tableau,
-            'foundation': self.tableau.foundations
+        self.class_types = {
+            'stock': MoveStock,
+            'tableau': MoveTableau,
+            'foundation': MoveTableau
             }
-        if loc_type in responses.keys():
-            self.move_location = responses[loc_type]
-        else:
-            print("Sorry that's not a valid response")
+        move_input = input("Where would you like to grab from? [Tableau, Stock, Foundation]: ").lower()
 
-        self.card = self.stock[-1] if len(self.stock) > 0 else None
-        self.other_card = responses[loc_type].compare_card(self.card)
-
-    def req_move_type(self):
-        """Runs the appropriate grab class based on where to grab from."""
-        move_choice = input(
-        'Where would you like to grab your card(s) from? [foundation, stock, tableau]: '
-            ).strip().lower()
-        
-        move_set = {
-            'foundation': GrabFoundation,
-            'stock': GrabStock,
-            'tableau': GrabTableau
-        }
-
-        if move_choice not in move_set:
-            print("Invalid choice. Please select 'foundation', 'stock', or 'tableau'.")
-            return None
-        
-        return move_set[move_choice]  # I should build this to ask what card you want on the tableau and where you want to move it to
-
-    def get_coords(self):
-        """Get the coordinates or identifiers for the card(s) being grabbed."""
-        raise NotImplementedError
-
-    def is_valid(self):
-        '''Determine if the move is executable'''
-        raise NotImplementedError
-
-    def execute(self):
-        """After verifying that the card is playable make the move."""
-        raise NotImplementedError
-
-
-class GrabStock(Grab):
-    """
-    Grab a card from the stock. You might only have the top card accessible.
-    After grabbing, you may place it onto a tableau stack or a foundation stack if valid.
-    """
-    def __init__(self, tableau):
-        super().__init__(tableau)
-
-    def get_coords(self):
-        self.move_position()
-    
-    def is_valid(self):
-        if self.stock:
-            return True
-        return False
-    
-    def execute(self):
-        if self.is_valid():
-            card = self.stock.pop(-1)
-
-
+        if move_input not in self.class_types.keys():
+            print('Sorry, that is not a valid option')
+            return
+        self.move_type = self.options[move_input]()
     
 
-# Need to prompt where to grab, what to grab (if needed), where to place.
+class MoveTableau(Grab):
+    def __init__(self):
+        super().__init__()
+
+    def req_loc_grab(self):
+        self.column = int(input('What column would you like to grab from?'))
+        self.row = int(input('What row would you like to grab from'))
+
+    def req_loc_place(self):
+        self.place_column = int(input("What column would you like to place onto?"))
+
+
+class MoveStock(Grab):
+    def __init__(self):
+        super().__init__()
+
+    def req_loc_grab(self): # Not needed for stock.
+        pass
+
+    def req_loc_place(self):
+        place_type = input("Where would you like to place the card? [Tableau, Foundation]: ").lower()
+
+
+class MoveFoundation(Grab):
+    def __init__(self):
+        super().__init__()
+
+    def req_loc_grab(self):
+        self.grab_suit = str(input('What suit would you like to grab from?'))
+
+    def req_loc_place(self):
+        pass
+
+
+
+"""
+Outline of my operations methods:
+
+    Card Methods:
+    - is_playable(self, other_card: "Card") -> bool
+    - is_playable_foundation(self, other: "Card") -> bool
+
+    Stock Methods:
+    - flip_stock(self)
+    - remove_card(self)
+
+    Foundation Methods: 
+    - remove_card(self, card) # Probably need to change to suite input.
+    - play_card(self, card)
+
+    Tableau Methods:
+    - remove_card(self, column, row)
+    - play_card(self, column, card)
+
+            self.options = {
+            'stock': ['tableau', 'foundation'],
+            'tableau': ['tableau', 'foundation'],
+            'foundation': ['tableau']
+            }
+
+"""
