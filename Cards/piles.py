@@ -49,14 +49,6 @@ class Foundations:
                 display_cards.append(Card(-1, -1))
         return str(display_cards)
 
-    def remove_card(self, card=Card):
-        if not card:
-            return
-        self.piles[card.suit].pop(-1)
-
-    def play_card(self, card: Card):
-        self.piles[card.suit].append(card)
-
 
 class Stack:
     def __init__(self, deck: list[Card], num_cards): 
@@ -202,22 +194,6 @@ class Tableau:
             for j in range(max_len - len(self.tableau[i])):
                 self.tableau[i].row.append(Card(-1, -1))
 
-    def play_card(self, column: int, cards: list[Card]) -> None:
-        if not isinstance(cards, list):
-            cards = [cards]
-        column = self.tableau[column - 1].row
-        bottom_idx = column.find_bottom_card()
-        if not bottom_idx:
-            return
-        for card in cards:
-            column.row.insert(bottom_idx, card)
 
-    def remove_card(self, row: int, column: int):
-        column = self.tableau[column-1].row
-        bottom_idx = column.find_bottom_card()
-        if not bottom_idx:
-            return
-        for i in range(row - 1, bottom_idx):
-            del column.row[row-1:bottom_idx]
 
             
