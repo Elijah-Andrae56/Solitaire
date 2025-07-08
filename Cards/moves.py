@@ -141,7 +141,10 @@ class MoveStock(Grab):
         place_type = input("Where would you like to place the card? [tableau, foundation]: ").lower()
 
     def req_loc_grab(self):
-        pass
+        """Automatically select the next card from the stock."""
+        if self.stock:
+            # The playable stock card is always the last one in the list
+            self.grab_card = self.stock[-1]
 
     def find_grab_card(self):
         self.grab_card = self.stock[-1]
@@ -160,7 +163,17 @@ class MoveFoundation(Grab):
         self.grab_suit = str(input('What suit would you like to grab from?'))
 
     def req_loc_place(self):
-        pass
+        """Ask the user where the grabbed card should be placed."""
+        destination = input(
+            "Enter tableau column number or foundation suit to place the card: "
+        ).strip()
+
+        if destination.isdigit():
+            self.place_column = int(destination)
+            self.place_suit = None
+        else:
+            self.place_suit = destination
+            self.place_column = None
 
     def find_grab_card(self):
         self.grab_card = self.foundations[self.grab_suit][-1]
