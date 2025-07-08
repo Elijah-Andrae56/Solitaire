@@ -194,6 +194,23 @@ class Tableau:
             for j in range(max_len - len(self.tableau[i])):
                 self.tableau[i].row.append(Card(-1, -1))
 
+    def play_card(self, column: int, cards: list[Card]) -> None:
+        if not isinstance(cards, list):
+            cards = [cards]
+        column = self.tableau[column - 1].row
+        bottom_idx = column.find_bottom_card()
+        if not bottom_idx:
+            return
+        for card in cards:
+            column.row.insert(bottom_idx, card)
+
+    def remove_card(self, row: int, column: int):
+        column = self.tableau[column-1].row
+        bottom_idx = column.find_bottom_card()
+        if not bottom_idx:
+            return
+        for i in range(row - 1, bottom_idx):
+            del column.row[row-1:bottom_idx]
 
 
             
