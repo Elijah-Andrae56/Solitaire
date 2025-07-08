@@ -1,0 +1,8 @@
+# Solitaire
+
+
+
+```bash
+pytest
+```
+
